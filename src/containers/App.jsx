@@ -1,41 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Categories from '../components/Categories';
 import Carousel from '../components/Carousel';
 import CarouselItem from '../components/CarouselItem';
 import Footer from '../components/Footer';
+import useInitialState from '../hooks/useInitialState';
 import '../assets/styles/App.scss';
 
-const App = () => (
-    <div className="App">
-        <Header />
-        <Search />
+const API = 'http://localhost:3000/initalState';
 
-        <Categories title="Mi lista">
-            <Carousel>
-                <CarouselItem/>
-                <CarouselItem/>
-                <CarouselItem/>
-                <CarouselItem/>
-            </Carousel>
-        </Categories>
+const App = () => {
 
-        <Categories title="Tendencias">
-            <Carousel>
-                <CarouselItem/>
-                <CarouselItem/>
-            </Carousel>
-        </Categories>
+    const initialState = useInitialState(API);
 
-        <Categories title="Originales de Platzi Video">
-            <Carousel>
-                <CarouselItem/>
-            </Carousel>
-        </Categories>
+    return (
+            <div className="App">
+                <Header />
+                <Search />
+                { initialState.mylist.length > 0 &&
+                    <Categories title="Mi lista">
+                        <Carousel>
+                            {initialState.mylist.map( item => 
+                                <CarouselItem key={item.id} {...item}/>
+                            )}
+                        </Carousel>
+                    </Categories>
+                }
+                
 
-        <Footer/>
-    </div>
-);
+                <Categories title="Tendencias">
+                    <Carousel>
+                        {initialState.trends.map(item => 
+                            <CarouselItem key={item.id} {...item}/>
+                        )}
+                    </Carousel>
+                </Categories>
+
+                <Categories title="Originales de Platzi Video">
+                    <Carousel>
+                    {initialState.originals.map(item => 
+                            <CarouselItem key={item.id} {...item}/>
+                        )}
+                    </Carousel>
+                </Categories>
+
+                <Footer/>
+            </div>
+        );
+    }
 
 export default App;
